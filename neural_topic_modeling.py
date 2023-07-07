@@ -29,7 +29,7 @@ def perform_bertopic(file_path, text_column, output_folder, device):
     df['topic_id'] = topics
     df['topic_probability'] = probs
     df = df.merge(topic_info, how = 'left', left_on = 'topic_id', right_on = 'Topic')
-    df.sort_values(by = ['topic_id', 'topic_probability'], inplace = True)
+    df.sort_values(by = ['topic_id', 'topic_probability'], ascending= [True, False], inplace = True)
 
     # ###### Hierarchy ######
 
