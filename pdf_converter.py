@@ -6,6 +6,7 @@ from tqdm import tqdm
 import nltk
 import fitz
 import textract
+import re
 
 def unzip_file(file_path, destination_path):
     with zipfile.ZipFile(file_path, "r") as zip_ref:
@@ -98,9 +99,12 @@ def sentence_tokenize_data(file_path, output_path):
     expanded_df.to_csv(output_path)
 
 def split_into_paragraphs(row):
-    paragraphs = row['Sentence'].split('\n\n')
+    text = row['Sentence'].replace('\\n\\n', ' \\n\\n ')
+    paragraphs = text.split(' \\n\\n ')
+    paragraphs = [p.strip() for p in paragraphs]  # Remove leading/trailing spaces
+    paragraphs = [p for p in paragraphs if p]  # Remove empty paragraphs
     sources = [row['Source']] * len(paragraphs)
-    return pd.DataFrame({'sentence': paragraphs, 'source': sources})
+    return pd.DataFrame({'paragraph': paragraphs, 'source': sources})
 
 def paragraph_tokenize_data(file_path, output_path):
     df = pd.read_csv(file_path)
@@ -111,5 +115,5 @@ def paragraph_tokenize_data(file_path, output_path):
 #                        '/Users/josephmeyer/Desktop/git/topic_modeling/data/output/extracted_pdf_textract_extract_sentences.csv')
 
 
-paragraph_tokenize_data('/Users/josephmeyer/Desktop/git/topic_modeling/data/output/extracted_pdf_textract_extract.csv', 
-                       '/Users/josephmeyer/Desktop/git/topic_modeling/data/output/extracted_pdf_textract_extract_paragraphs.csv')
+# paragraph_tokenize_data('/Users/josephmeyer/Desktop/git/topic_modeling/data/output/extracted_pdf_textract_extract.csv', 
+#                        '/Users/josephmeyer/Desktop/git/topic_modeling/data/output/extracted_pdf_textract_extract_paragraphs.csv')
